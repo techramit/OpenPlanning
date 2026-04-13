@@ -1,5 +1,6 @@
 # Private Documents
 docs/
+CLAUDE.md
 
 # Environment Variables
 .env
