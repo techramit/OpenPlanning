@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "openplanning"
-version = "1.0.0"
+version = "0.0.0"
 description = "AI-powered CLI tool that transforms raw ideas into comprehensive product plans"
 readme = "README.md"
 requires-python = ">=3.10"
