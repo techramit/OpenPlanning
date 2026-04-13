@@ -1,14 +1,15 @@
 """OpenPlanning CLI - Main entry point."""
 
+import os
+import sys
 from typing import Optional
 
 import click
 from rich.console import Console
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskProgressColumn
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn
 from rich.prompt import Prompt
 from rich.text import Text
-
 
 console = Console()
 
@@ -18,76 +19,99 @@ class OpenPlanningCLI:
 
     def __init__(self) -> None:
         self.console = Console()
+        self.console.clear()
 
     def display_welcome(self) -> None:
-        """Display welcome banner."""
-        welcome_text = Text()
-        welcome_text.append("OpenPlanning", style="bold cyan")
-        welcome_text.append("\nAI-Powered Product Planning", style="dim")
+        """Display welcome banner with ASCII art."""
+        ascii_art = """░█████╗░██████╗░███████╗███╗░░██╗
+██╔══██╗██╔══██╗██╔════╝████╗░██║
+██║░░██║██████╔╝█████╗░░██╔██╗██║
+██║░░██║██╔═══╝░██╔══╝░░██║╚████║
+╚█████╔╝██║░░░░░███████╗██║░╚███║
+░╚════╝░╚═╝░░░░░╚══════╝╚═╝░░╚══╝
+██████╗░██╗░░░░░░█████╗░███╗░░██╗███╗░░██╗██╗███╗░░██╗░██████╗░
+██╔══██╗██║░░░░░██╔══██╗████╗░██║████╗░██║██║████╗░██║██╔════╝░
+██████╔╝██║░░░░░███████║██╔██╗██║██╔██╗██║██║██╔██╗██║██║░░██╗░
+██╔═══╝░██║░░░░░██╔══██║██║╚████║██║╚████║██║██║╚████║██║░░╚██╗
+██║░░░░░███████╗██║░░██║██║░╚███║██║░╚███║██║██║░╚███║╚██████╔╝
+╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚══╝╚═╝╚═╝░░╚══╝░╚═════╝░"""
+
+        welcome_text = Text(ascii_art, style="bold bright_cyan")
+        welcome_text.append("\n\nAI-Powered Product Planning", style="dim cyan")
 
         panel = Panel(
             welcome_text,
-            title="Welcome",
-            border_style="cyan",
+            border_style="bright_cyan",
             padding=(1, 2),
+            expand=False,
         )
-        self.console.print(panel)
+        self.console.print(panel, justify="center")
         self.console.print()
 
     def get_user_idea(self) -> str:
         """Get product idea from user."""
-        self.console.print("Describe your product idea in detail:", style="bold")
+        self.console.print("Describe your product idea:", style="bold cyan")
         self.console.print("(Press Enter twice when finished)\n", style="dim")
 
         lines = []
         while True:
-            line = Prompt.ask("")
+            line = Prompt.ask("> ",
+                console=self.console,
+                show_default=False,
+            )
             if line:
                 lines.append(line)
             elif lines:
                 break
             else:
-                self.console.print("Please enter your idea.", style="yellow")
+                self.console.print("Please enter your idea:", style="yellow")
 
         return " ".join(lines)
 
     def display_session_info(self, idea: str) -> None:
         """Display session initialization info."""
-        self.console.print()
-        self.console.print(Panel(
-            f"Idea: {idea[:80]}..." if len(idea) > 80 else f"Idea: {idea}",
-            title="Session Started",
-            border_style="green",
-        ))
+        truncated = idea[:77] + "..." if len(idea) > 80 else idea
+        info_text = Text()
+        info_text.append("Idea: ", style="dim")
+        info_text.append(truncated, style="italic")
+
+        panel = Panel(
+            info_text,
+            title=r"[Session Started]",
+            border_style="bright_green",
+            expand=False,
+        )
+        self.console.print(panel, justify="center")
         self.console.print()
 
     def run_agents(self) -> None:
         """Run the agent workflow with progress display."""
         agents = [
-            ("Researching market size...", "Bob", "cyan"),
-            ("Analyzing users...", "Emma", "magenta"),
-            ("Evaluating technical feasibility...", "Elon", "blue"),
-            ("Building business model...", "Reid", "green"),
-            ("Creating roadmap...", "Gantt", "yellow"),
-            ("Designing architecture...", "Grace", "red"),
-            ("Validating findings...", "Reviewer", "white"),
+            ("Market Research", "Bob", "cyan", "Researching market size and competitors..."),
+            ("User Research", "Emma", "magenta", "Creating personas and user stories..."),
+            ("Technical Analysis", "Elon", "blue", "Evaluating technical feasibility..."),
+            ("Business Model", "Reid", "green", "Building business model..."),
+            ("Roadmap Planning", "Gantt", "yellow", "Creating implementation roadmap..."),
+            ("Architecture", "Grace", "red", "Designing system architecture..."),
+            ("Validation", "Reviewer", "bright_white", "Cross-checking all findings..."),
         ]
 
         total_tokens = 0
 
         with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            BarColumn(),
-            TaskProgressColumn(),
+            SpinnerColumn(finished_text="✓"),
+            TextColumn("[progress.description]{task.description}", style="bright_black"),
+            BarColumn(complete_style="bright_cyan", finished_style="bright_green"),
             console=self.console,
+            expand=True,
         ) as progress:
-            for description, agent, color in agents:
+            for name, agent, color, description in agents:
                 task = progress.add_task(
-                    f"[{color}]{description}[/{color}]",
+                    f"[{color}]{description}",
                     total=100,
                 )
 
+                progress.update(task, advance=0)
                 for _ in range(100):
                     progress.advance(task)
 
@@ -97,7 +121,7 @@ class OpenPlanningCLI:
                 progress.update(
                     task,
                     completed=100,
-                    description=f"[bold green]✓ {agent} complete[/]",
+                    description=f"[bold green]✓ {agent} ({name})[/]",
                 )
 
         self.console.print()
@@ -105,24 +129,26 @@ class OpenPlanningCLI:
 
     def display_completion_summary(self, total_tokens: int) -> None:
         """Display session completion summary."""
-        estimated_cost = total_tokens * 0.00002
+        estimated_cost = total_tokens * 0.00001
 
         summary = Text()
-        summary.append("✓ Session complete!", style="bold green")
-        summary.append(f"\nTotal tokens: {total_tokens:,}")
-        summary.append(f"\nEstimated cost: ${estimated_cost:.2f}")
-        summary.append(f"\nDocuments: 6 files generated", style="dim")
+        summary.append("✓ Session complete!\n", style="bold bright_green")
+        summary.append(f"[{total_tokens:,} tokens] ", style="cyan")
+        summary.append(f"[${estimated_cost:.2f}] ", style="green")
+        summary.append("[6 docs]", style="dim")
 
         panel = Panel(
             summary,
-            title="Summary",
-            border_style="green",
+            title=r"[Summary]",
+            border_style="bright_green",
+            expand=False,
         )
-        self.console.print(panel)
+        self.console.print(panel, justify="center")
 
     def run_interactive(self) -> None:
         """Run the interactive CLI session."""
         self.display_welcome()
+        self.console.print()
         idea = self.get_user_idea()
         self.display_session_info(idea)
         self.run_agents()
@@ -139,7 +165,13 @@ class OpenPlanningCLI:
     is_flag=True,
     help="Show version information",
 )
-def cli(setup: bool, version: bool) -> None:
+@click.option(
+    "--effort",
+    type=click.Choice(["low", "medium", "high", "max"], case_sensitive=False),
+    default="medium",
+    help="Research depth level",
+)
+def cli(setup: bool, version: bool, effort: str) -> None:
     """OpenPlanning - AI-Powered Product Planning CLI."""
     if version:
         from openplanning import __version__
@@ -155,9 +187,10 @@ def cli(setup: bool, version: bool) -> None:
         cli_app.run_interactive()
     except KeyboardInterrupt:
         console.print("\nSession cancelled.", style="yellow")
+        sys.exit(1)
     except Exception as e:
         console.print(f"\nError: {e}", style="red")
-        raise
+        sys.exit(1)
 
 
 if __name__ == "__main__":
