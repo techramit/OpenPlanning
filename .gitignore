@@ -5,3 +5,18 @@ CLAUDE.md
 # Environment Variables
 .env
 .env.local
+.venv/
+
+# Cache
+src/openplanning.egg-info
+src/openplanning.egg-info/*
+src/openplanning/__pycache__
+src/openplanning/__pycache__/*
+__pycache__
+__pycache__/*
+build
+build/*
+dist
+dist/*
+*.egg-info
+*.egg-info/*
