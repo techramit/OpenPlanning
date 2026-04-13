@@ -1,0 +1,6 @@
+# Private Documents
+docs/
+
+# Environment Variables
+.env
+.env.local
