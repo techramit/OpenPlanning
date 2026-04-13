@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openplanning"
+version = "1.0.0"
+description = "AI-powered CLI tool that transforms raw ideas into comprehensive product plans"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "OpenPlanning Team"},
+]
+keywords = ["cli", "ai", "product", "planning", "anthropic", "openai"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Planning",
+]
+dependencies = [
+    "click>=8.0.0",
+    "rich>=13.0.0",
+    "anthropic>=0.28.0",
+    "openai>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "mypy>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/openplanning/openplanning"
+Repository = "https://github.com/openplanning/openplanning"
+Documentation = "https://github.com/openplanning/openplanning/tree/main/docs"
+Issues = "https://github.com/openplanning/openplanning/issues"
+
+[project.scripts]
+openplanning = "openplanning.cli.main:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
