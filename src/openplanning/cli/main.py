@@ -13,17 +13,10 @@ from rich.text import Text
 
 console = Console()
 
+# UI Constants for scalability
+TITLE_ASCII = """
 
-class OpenPlanningCLI:
-    """Main CLI class for OpenPlanning."""
-
-    def __init__(self) -> None:
-        self.console = Console()
-        self.console.clear()
-
-    def display_welcome(self) -> None:
-        """Display welcome banner with ASCII art."""
-        ascii_art = """░█████╗░██████╗░███████╗███╗░░██╗
+░█████╗░██████╗░███████╗███╗░░██╗
 ██╔══██╗██╔══██╗██╔════╝████╗░██║
 ██║░░██║██████╔╝█████╗░░██╔██╗██║
 ██║░░██║██╔═══╝░██╔══╝░░██║╚████║
@@ -34,19 +27,25 @@ class OpenPlanningCLI:
 ██████╔╝██║░░░░░███████║██╔██╗██║██╔██╗██║██║██╔██╗██║██║░░██╗░
 ██╔═══╝░██║░░░░░██╔══██║██║╚████║██║╚████║██║██║╚████║██║░░╚██╗
 ██║░░░░░███████╗██║░░██║██║░╚███║██║░╚███║██║██║░╚███║╚██████╔╝
-╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚══╝╚═╝╚═╝░░╚══╝░╚═════╝░"""
+╚═╝░░░░░╚══════╝╚═╝░░╚═╝╚═╝░░╚══╝╚═╝░░╚══╝╚═╝╚═╝░░╚══╝░╚═════╝░
+"""
 
-        welcome_text = Text(ascii_art, style="bold bright_cyan")
-        welcome_text.append("\n\nAI-Powered Product Planning", style="dim cyan")
+TITLE_STYLE = "bold bright_cyan"
+SUBTITLE_STYLE = "#FFA500"
+INPUT_PROMPT = "> "
 
-        panel = Panel(
-            welcome_text,
-            border_style="bright_cyan",
-            padding=(1, 2),
-            expand=False,
-        )
-        self.console.print(panel, justify="center")
-        self.console.print()
+
+class OpenPlanningCLI:
+    """Main CLI class for OpenPlanning."""
+
+    def __init__(self) -> None:
+        self.console = Console()
+        self.console.clear()
+
+    def display_welcome(self) -> None:
+        """Display welcome banner with ASCII art."""
+        self.console.print(Text(TITLE_ASCII, style=TITLE_STYLE))
+        self.console.print(Text("AI-Powered Product Planning\n", style=SUBTITLE_STYLE))
 
     def get_user_idea(self) -> str:
         """Get product idea from user."""
