@@ -188,6 +188,14 @@ Full example: [docs/EXAMPLE.md](docs/EXAMPLE.md)
 npm install -g openplanning
 ```
 
+### Install from GitHub
+```bash
+git clone https://github.com/openplanning/openplanning
+cd openplanning
+npm install
+npm link
+```
+
 ### Install via Curl
 ```bash
 curl -fsSL https://install.openplanning.dev | bash
@@ -340,8 +348,8 @@ All documentation available in `docs/` folder:
 ```bash
 git clone https://github.com/openplanning/openplanning
 cd openplanning
-pip install -r requirements-dev.txt
-pytest tests/
+npm install --include=dev
+jest
 ```
 
 ### Quick Examples to Try
